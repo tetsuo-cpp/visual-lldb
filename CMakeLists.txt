@@ -16,6 +16,7 @@ find_package(Qt6 COMPONENTS Widgets REQUIRED)
 add_executable(visual-lldb
   MainWindow.ui
   MainWindow.cpp
+  LldbDebugger.cpp
   visual-lldb.cpp
   resources.qrc
   )
