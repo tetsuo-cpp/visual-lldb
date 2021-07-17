@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16.0)
 project(visual-lldb VERSION 1.0.0 LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Setup Qt6.

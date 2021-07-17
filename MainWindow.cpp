@@ -5,7 +5,9 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
-#include <lldb/API/SBDebugger.h>
+#include <lldb/API/LLDB.h>
+
+#include <iostream>
 
 namespace visual_lldb {
 
@@ -27,7 +29,23 @@ MainWindow::MainWindow(QWidget *parent)
   centralWidget->setLayout(layout);
   this->setCentralWidget(centralWidget);
 
-  lldb::SBDebugger dbg;
+  lldb::SBError error = lldb::SBDebugger::InitializeWithErrorHandling();
+  if (error.Fail()) {
+    std::cerr << "initialization failed: " << error.GetCString() << '\n';
+    // return 1;
+  }
+  lldb::SBHostOS::ThreadCreated("<lldb.driver.main-thread>");
+
+  lldb::SBDebugger dbg = lldb::SBDebugger::Create(false);
+  auto target = dbg.CreateTarget("/home/tetsuo/dev/visual-lldb/foo");
+  assert(target);
+  auto bp = target.BreakpointCreateByName("printMsg");
+  assert(bp);
+  auto process = target.LaunchSimple(nullptr, nullptr, ".");
+  assert(process);
+
+  lldb::SBDebugger::Destroy(dbg);
+  lldb::SBDebugger::Terminate();
 }
 
 MainWindow::~MainWindow() { delete ui; }
