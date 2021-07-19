@@ -28,27 +28,86 @@
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
      <item>
-      <widget class="QTextBrowser" name="codeBrowser"/>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="runButton">
+         <property name="text">
+          <string>Run</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="nextButton">
+         <property name="text">
+          <string>Next</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="stepDownButton">
+         <property name="text">
+          <string>Step down</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="stepUpButton">
+         <property name="text">
+          <string>Step up</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="bpButton">
-       <property name="text">
-        <string>Breakpoint</string>
-       </property>
-      </widget>
+      <widget class="QTextEdit" name="codeBrowser"/>
      </item>
      <item>
-      <widget class="QPushButton" name="runButton">
-       <property name="text">
-        <string>Run</string>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="currentIndex">
+        <number>1</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="stacktraceButton">
-       <property name="text">
-        <string>Stacktrace</string>
-       </property>
+       <widget class="QWidget" name="frameTab">
+        <attribute name="title">
+         <string>Frame</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="bpTab">
+        <attribute name="title">
+         <string>Breakpoints</string>
+        </attribute>
+        <widget class="QTableView" name="bpView">
+         <property name="geometry">
+          <rect>
+           <x>7</x>
+           <y>10</y>
+           <width>761</width>
+           <height>201</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="logTab">
+        <attribute name="title">
+         <string>Message Log</string>
+        </attribute>
+        <widget class="QPlainTextEdit" name="logView">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>751</width>
+           <height>201</height>
+          </rect>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </widget>
       </widget>
      </item>
     </layout>

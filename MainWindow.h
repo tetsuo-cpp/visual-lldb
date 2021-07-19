@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BreakpointModel.h"
 #include "LldbDebugger.h"
 
 #include <QMainWindow>
@@ -18,13 +19,21 @@ public:
   virtual ~MainWindow();
 
 public slots:
-  void onBreakpoint();
   void onRun();
-  void onStacktrace();
+  void onNext();
+  void onStepDown();
+  void onStepUp();
 
 private:
+  void updateView();
+  void updateCodeBrowser();
+  void updateBreakpointModel();
+  void logMsg(const std::string &msg);
+
   Ui::MainWindow *ui;
   LldbDebugger debugger;
+  std::string msgLog;
+  BreakpointModel bpModel;
 };
 
 } // namespace visual_lldb

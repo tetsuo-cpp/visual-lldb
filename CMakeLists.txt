@@ -17,6 +17,7 @@ add_executable(visual-lldb
   MainWindow.ui
   MainWindow.cpp
   LldbDebugger.cpp
+  BreakpointModel.cpp
   visual-lldb.cpp
   resources.qrc
   )

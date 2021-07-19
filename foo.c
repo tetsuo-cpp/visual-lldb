@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <unistd.h>
 
 void printMsg(const char *msg) { printf("%s", msg); }
 
