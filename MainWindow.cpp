@@ -79,6 +79,7 @@ void MainWindow::populateCodeBrowser(const std::string &filePath) {
     const std::string contents((std::istreambuf_iterator<char>(file)),
                                std::istreambuf_iterator<char>());
     auto *codeDoc = new QTextDocument(contents.c_str());
+    codeDoc->setDocumentLayout(new QPlainTextDocumentLayout(codeDoc));
     ui->codeBrowser->setDocument(codeDoc);
     currentFile = filePath;
   }

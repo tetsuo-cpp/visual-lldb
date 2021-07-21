@@ -67,7 +67,11 @@
       </layout>
      </item>
      <item>
-      <widget class="QTextEdit" name="codeBrowser"/>
+      <widget class="visual_lldb::CodeBrowser" name="codeBrowser">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QTabWidget" name="tabWidget">
@@ -142,6 +146,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>visual_lldb::CodeBrowser</class>
+   <extends>QTextEdit</extends>
+   <header>CodeBrowser.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
