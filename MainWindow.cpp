@@ -1,6 +1,8 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
+#include <QFileDialog>
+
 #include <fstream>
 
 namespace visual_lldb {
@@ -21,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
                    &MainWindow::onStepDown);
   QObject::connect(ui->stepUpButton, &QAbstractButton::clicked, this,
                    &MainWindow::onStepUp);
+  QObject::connect(ui->openFileButton, &QAbstractButton::clicked, this,
+                   &MainWindow::onOpenFile);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -45,6 +49,11 @@ void MainWindow::onStepUp() {
   updateView();
 }
 
+void MainWindow::onOpenFile() {
+  const QString openFile = QFileDialog::getOpenFileName();
+  populateCodeBrowser(openFile.toStdString());
+}
+
 void MainWindow::updateView() {
   updateCodeBrowser();
   updateBreakpointModel();
@@ -56,13 +65,20 @@ void MainWindow::updateCodeBrowser() {
   // Do something smarter than this.
   const std::string filePath =
       codeLoc.getDirectory() + '/' + codeLoc.getFileName();
-  // Read the contents off the disk and populate the code view.
-  std::ifstream file(filePath);
-  assert(file);
-  const std::string contents((std::istreambuf_iterator<char>(file)),
-                             std::istreambuf_iterator<char>());
-  auto *codeDoc = new QTextDocument(contents.c_str());
-  ui->codeBrowser->setDocument(codeDoc);
+  populateCodeBrowser(filePath);
+}
+
+void MainWindow::populateCodeBrowser(const std::string &filePath) {
+  if (currentFile != filePath) {
+    // Read the contents off the disk and populate the code view.
+    std::ifstream file(filePath);
+    assert(file);
+    const std::string contents((std::istreambuf_iterator<char>(file)),
+                               std::istreambuf_iterator<char>());
+    auto *codeDoc = new QTextDocument(contents.c_str());
+    ui->codeBrowser->setDocument(codeDoc);
+    currentFile = filePath;
+  }
   // Mark the breakpoints visually as well as the current position.
 }
 

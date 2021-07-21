@@ -24,12 +24,14 @@ public slots:
   void onNext();
   void onStepDown();
   void onStepUp();
+  void onOpenFile();
 
 private:
   void updateView();
   void updateCodeBrowser();
   void updateFrameModel();
   void updateBreakpointModel();
+  void populateCodeBrowser(const std::string &fileName);
   void logMsg(const std::string &msg);
 
   Ui::MainWindow *ui;
@@ -37,6 +39,7 @@ private:
   std::string msgLog;
   FrameVariableModel frameModel;
   BreakpointModel bpModel;
+  std::string currentFile;
 };
 
 } // namespace visual_lldb
