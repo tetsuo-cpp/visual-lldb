@@ -7,8 +7,9 @@
 
 namespace visual_lldb {
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), debugger("foo"), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(const QString &executablePath, QWidget *parent)
+    : QMainWindow(parent), debugger(executablePath.toStdString()),
+      ui(new Ui::MainWindow) {
   // Call this before manipulating the window.
   ui->setupUi(this);
 
