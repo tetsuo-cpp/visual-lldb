@@ -52,6 +52,8 @@ void MainWindow::onStepUp() {
 
 void MainWindow::onOpenFile() {
   const QString openFile = QFileDialog::getOpenFileName();
+  if (openFile.isEmpty())
+    return;
   populateCodeBrowser(openFile.toStdString());
 }
 
