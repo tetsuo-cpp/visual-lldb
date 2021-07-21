@@ -35,6 +35,7 @@ public:
   void setBreakpoint(const std::string &functionName);
   CodeLocation getLocation() const;
   std::vector<lldb::SBBreakpoint> &getBreakpoints();
+  lldb::SBValueList getFrameVariables();
 
 private:
   void waitForStop();

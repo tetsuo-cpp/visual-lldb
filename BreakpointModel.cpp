@@ -34,14 +34,15 @@ QVariant BreakpointModel::data(const QModelIndex &index, int role) const {
 void BreakpointModel::setBreakpoints(std::vector<Breakpoint> &&newBps) {
   const size_t prevSize = bps.size();
   bps = std::move(newBps);
-  if (bps.empty())
-    return;
-  beginInsertRows(QModelIndex(), prevSize, bps.size() - prevSize);
-  insertRows(rowCount(), bps.size() - prevSize);
-  endInsertRows();
+  int diff = bps.size() - prevSize;
+  if (diff > 0)
+    insertRows(prevSize, diff);
+  else if (diff < 0)
+    removeRows(bps.size(), diff);
+  emit layoutChanged();
   // Emit changes.
-  QModelIndex topLeft = index(0, 0);
-  QModelIndex bottomRight = index(bps.size() - 1, 2);
+  QModelIndex topLeft = createIndex(0, 0);
+  QModelIndex bottomRight = createIndex(bps.size() - 1, 2);
   emit dataChanged(topLeft, topLeft, {Qt::DisplayRole});
 }
 

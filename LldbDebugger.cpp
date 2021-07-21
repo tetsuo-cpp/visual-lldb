@@ -71,6 +71,12 @@ CodeLocation LldbDebugger::getLocation() const {
 
 std::vector<SBBreakpoint> &LldbDebugger::getBreakpoints() { return bps; }
 
+SBValueList LldbDebugger::getFrameVariables() {
+  assert(process);
+  return process.GetSelectedThread().GetSelectedFrame().GetVariables(
+      true, true, true, true, DynamicValueType::eNoDynamicValues);
+}
+
 bool LldbDebugger::isStopped() { return process.GetState() == eStateStopped; }
 
 void LldbDebugger::waitForStop() {

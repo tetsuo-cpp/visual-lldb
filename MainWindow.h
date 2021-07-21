@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BreakpointModel.h"
+#include "FrameVariableModel.h"
 #include "LldbDebugger.h"
 
 #include <QMainWindow>
@@ -27,12 +28,14 @@ public slots:
 private:
   void updateView();
   void updateCodeBrowser();
+  void updateFrameModel();
   void updateBreakpointModel();
   void logMsg(const std::string &msg);
 
   Ui::MainWindow *ui;
   LldbDebugger debugger;
   std::string msgLog;
+  FrameVariableModel frameModel;
   BreakpointModel bpModel;
 };
 

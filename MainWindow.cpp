@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
   // Call this before manipulating the window.
   ui->setupUi(this);
 
+  ui->frameView->setModel(&frameModel);
   ui->bpView->setModel(&bpModel);
 
   QObject::connect(ui->runButton, &QAbstractButton::clicked, this,
@@ -47,6 +48,7 @@ void MainWindow::onStepUp() {
 void MainWindow::updateView() {
   updateCodeBrowser();
   updateBreakpointModel();
+  updateFrameModel();
 }
 
 void MainWindow::updateCodeBrowser() {
@@ -64,6 +66,21 @@ void MainWindow::updateCodeBrowser() {
   // Mark the breakpoints visually as well as the current position.
 }
 
+void MainWindow::updateFrameModel() {
+  auto frameVariables = debugger.getFrameVariables();
+  std::vector<FrameVariable> modelFrame;
+  for (int i = 0; i < frameVariables.GetSize(); ++i) {
+    auto val = frameVariables.GetValueAtIndex(i);
+    FrameVariable newFrame;
+    newFrame.name = val.GetName();
+    newFrame.value = val.GetValue();
+    modelFrame.push_back(std::move(newFrame));
+  }
+  logMsg("Displaying " + std::to_string(modelFrame.size()) +
+         " frame variables");
+  frameModel.setFrameVariables(std::move(modelFrame));
+}
+
 void MainWindow::updateBreakpointModel() {
   // Debugger should just return this instead of doing transformation here.
   auto &debuggerBps = debugger.getBreakpoints();
@@ -72,8 +89,8 @@ void MainWindow::updateBreakpointModel() {
                  std::back_inserter(modelBps), [](lldb::SBBreakpoint &bp) {
                    Breakpoint modelBp;
                    lldb::SBAddress addr = bp.GetLocationAtIndex(0).GetAddress();
-                   lldb::SBFileSpec fileSpec = addr.GetModule().GetFileSpec();
                    lldb::SBLineEntry lineEntry = addr.GetLineEntry();
+                   lldb::SBFileSpec fileSpec = lineEntry.GetFileSpec();
                    modelBp.filePath = std::string(fileSpec.GetDirectory()) +
                                       '/' + fileSpec.GetFilename();
                    modelBp.lineNumber = lineEntry.GetLine();

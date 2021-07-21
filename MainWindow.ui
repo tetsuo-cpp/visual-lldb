@@ -65,12 +65,22 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="frameTab">
         <attribute name="title">
          <string>Frame</string>
         </attribute>
+        <widget class="QTableView" name="frameView">
+         <property name="geometry">
+          <rect>
+           <x>7</x>
+           <y>10</y>
+           <width>761</width>
+           <height>201</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="bpTab">
         <attribute name="title">
