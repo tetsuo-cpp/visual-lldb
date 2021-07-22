@@ -19,7 +19,7 @@ public:
   QVariant data(const QModelIndex &index,
                 int role = Qt::DisplayRole) const override;
 
-  void setBreakpoints(std::vector<Breakpoint> &&newBps);
+  void setBreakpoints(const std::vector<Breakpoint> &newBps);
 
 private:
   std::vector<Breakpoint> bps;

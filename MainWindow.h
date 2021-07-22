@@ -28,10 +28,11 @@ public slots:
 
 private:
   void updateView();
-  void updateCodeBrowser();
+  void updateCodeBrowser(const std::vector<Breakpoint> &bps);
   void updateFrameModel();
-  void updateBreakpointModel();
-  void populateCodeBrowser(const std::string &fileName);
+  std::vector<Breakpoint> updateBreakpointModel();
+  void populateCodeBrowser(const std::string &fileName, size_t lineNumber,
+                           const std::vector<Breakpoint> &bps);
   void logMsg(const std::string &msg);
 
   Ui::MainWindow *ui;

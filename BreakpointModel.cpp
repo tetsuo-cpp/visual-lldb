@@ -31,9 +31,9 @@ QVariant BreakpointModel::data(const QModelIndex &index, int role) const {
   return QVariant();
 }
 
-void BreakpointModel::setBreakpoints(std::vector<Breakpoint> &&newBps) {
+void BreakpointModel::setBreakpoints(const std::vector<Breakpoint> &newBps) {
   const size_t prevSize = bps.size();
-  bps = std::move(newBps);
+  bps = newBps;
   int diff = bps.size() - prevSize;
   if (diff > 0)
     insertRows(prevSize, diff);

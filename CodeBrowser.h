@@ -1,5 +1,7 @@
 #pragma once
 
+#include "BreakpointModel.h"
+
 #include <QPlainTextEdit>
 
 QT_BEGIN_NAMESPACE
@@ -21,13 +23,15 @@ public:
 
   void lineNumberAreaPaintEvent(QPaintEvent *event);
   int lineNumberAreaWidth();
+  void contextMenuEvent(QContextMenuEvent *event) override;
+  void updateHighlightedLines(const std::vector<Breakpoint> &bps,
+                              size_t currentLine);
 
 protected:
   void resizeEvent(QResizeEvent *event) override;
 
 private slots:
   void updateLineNumberAreaWidth(int newBlockCount);
-  void highlightCurrentLine();
   void updateLineNumberArea(const QRect &rect, int dy);
 
 private:

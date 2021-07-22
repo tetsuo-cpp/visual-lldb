@@ -54,24 +54,31 @@ void MainWindow::onOpenFile() {
   const QString openFile = QFileDialog::getOpenFileName();
   if (openFile.isEmpty())
     return;
-  populateCodeBrowser(openFile.toStdString());
+  // FIXME: Breakpoints markings will disappear if you open a file manually.
+  populateCodeBrowser(openFile.toStdString(), 0, {});
 }
 
 void MainWindow::updateView() {
-  updateCodeBrowser();
-  updateBreakpointModel();
+  // Not sure what this could should look but this ain't it.
+  //
+  // Since multiple components care about breakpoints, maybe we should be using
+  // that signal/slot mechanism?
+  const auto bps = updateBreakpointModel();
+  updateCodeBrowser(bps);
   updateFrameModel();
 }
 
-void MainWindow::updateCodeBrowser() {
+void MainWindow::updateCodeBrowser(const std::vector<Breakpoint> &bps) {
   const auto codeLoc = debugger.getLocation();
   // Do something smarter than this.
   const std::string filePath =
       codeLoc.getDirectory() + '/' + codeLoc.getFileName();
-  populateCodeBrowser(filePath);
+  populateCodeBrowser(filePath, codeLoc.getLine(), bps);
 }
 
-void MainWindow::populateCodeBrowser(const std::string &filePath) {
+void MainWindow::populateCodeBrowser(const std::string &filePath,
+                                     size_t lineNumber,
+                                     const std::vector<Breakpoint> &bps) {
   if (currentFile != filePath) {
     // Read the contents off the disk and populate the code view.
     std::ifstream file(filePath);
@@ -84,6 +91,7 @@ void MainWindow::populateCodeBrowser(const std::string &filePath) {
     currentFile = filePath;
   }
   // Mark the breakpoints visually as well as the current position.
+  ui->codeBrowser->updateHighlightedLines(bps, lineNumber);
 }
 
 void MainWindow::updateFrameModel() {
@@ -101,7 +109,7 @@ void MainWindow::updateFrameModel() {
   frameModel.setFrameVariables(std::move(modelFrame));
 }
 
-void MainWindow::updateBreakpointModel() {
+std::vector<Breakpoint> MainWindow::updateBreakpointModel() {
   // Debugger should just return this instead of doing transformation here.
   auto &debuggerBps = debugger.getBreakpoints();
   std::vector<Breakpoint> modelBps;
@@ -117,7 +125,8 @@ void MainWindow::updateBreakpointModel() {
                    return modelBp;
                  });
   logMsg("Added " + std::to_string(modelBps.size()) + " breakpoints");
-  bpModel.setBreakpoints(std::move(modelBps));
+  bpModel.setBreakpoints(modelBps);
+  return modelBps;
 }
 
 void MainWindow::logMsg(const std::string &msg) {

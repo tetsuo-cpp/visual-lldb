@@ -1,5 +1,6 @@
 #include "CodeBrowser.h"
 
+#include <QMenu>
 #include <QPainter>
 #include <QTextBlock>
 
@@ -12,11 +13,8 @@ CodeBrowser::CodeBrowser(QWidget *parent) : QPlainTextEdit(parent) {
           &CodeBrowser::updateLineNumberAreaWidth);
   connect(this, &CodeBrowser::updateRequest, this,
           &CodeBrowser::updateLineNumberArea);
-  connect(this, &CodeBrowser::cursorPositionChanged, this,
-          &CodeBrowser::highlightCurrentLine);
 
   updateLineNumberAreaWidth(0);
-  highlightCurrentLine();
 }
 
 int CodeBrowser::lineNumberAreaWidth() {
@@ -30,6 +28,13 @@ int CodeBrowser::lineNumberAreaWidth() {
   int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
 
   return space;
+}
+
+void CodeBrowser::contextMenuEvent(QContextMenuEvent *event) {
+  QMenu *menu = createStandardContextMenu();
+  menu->addAction(tr("Toggle Breakpoint"));
+  menu->exec(event->globalPos());
+  delete menu;
 }
 
 void CodeBrowser::updateLineNumberAreaWidth(int /* newBlockCount */) {
@@ -54,17 +59,28 @@ void CodeBrowser::resizeEvent(QResizeEvent *e) {
       QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
 
-void CodeBrowser::highlightCurrentLine() {
+void CodeBrowser::updateHighlightedLines(const std::vector<Breakpoint> &bps,
+                                         size_t currentLine) {
   QList<QTextEdit::ExtraSelection> extraSelections;
-
-  if (!isReadOnly()) {
+  // Mark each breakpoint as red.
+  for (const auto &bp : bps) {
     QTextEdit::ExtraSelection selection;
-
-    QColor lineColor = QColor(Qt::yellow).lighter(160);
-
+    QTextCursor cursor(document()->findBlockByLineNumber(bp.lineNumber - 1));
+    QColor lineColor = QColor(Qt::red).lighter(160);
     selection.format.setBackground(lineColor);
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-    selection.cursor = textCursor();
+    selection.cursor = cursor;
+    selection.cursor.clearSelection();
+    extraSelections.append(selection);
+  }
+  // Mark current position as yellow.
+  if (currentLine > 0) {
+    QTextEdit::ExtraSelection selection;
+    QTextCursor cursor(document()->findBlockByLineNumber(currentLine));
+    QColor lineColor = QColor(Qt::yellow).lighter(160);
+    selection.format.setBackground(lineColor);
+    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selection.cursor = cursor;
     selection.cursor.clearSelection();
     extraSelections.append(selection);
   }
