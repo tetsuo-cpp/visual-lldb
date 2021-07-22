@@ -43,7 +43,7 @@ void BreakpointModel::setBreakpoints(const std::vector<Breakpoint> &newBps) {
   // Emit changes.
   QModelIndex topLeft = createIndex(0, 0);
   QModelIndex bottomRight = createIndex(bps.size() - 1, 2);
-  emit dataChanged(topLeft, topLeft, {Qt::DisplayRole});
+  emit dataChanged(topLeft, bottomRight, {Qt::DisplayRole});
 }
 
 } // namespace visual_lldb
