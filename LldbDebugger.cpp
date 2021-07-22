@@ -27,7 +27,6 @@ LldbDebugger::~LldbDebugger() {
 }
 
 void LldbDebugger::run() {
-  setBreakpoint("printMsg");
   process = target.LaunchSimple(nullptr, nullptr, ".");
   assert(process);
   waitForStop();
@@ -54,8 +53,24 @@ void LldbDebugger::stepUp() {
   waitForStop();
 }
 
-void LldbDebugger::setBreakpoint(const std::string &functionName) {
-  auto bp = target.BreakpointCreateByName(functionName.c_str());
+void LldbDebugger::toggleBreakpoint(const std::string &fileName,
+                                    size_t lineNumber) {
+  for (auto it = bps.begin(); it != bps.end(); ++it) {
+    auto &bp = *it;
+    auto lineEntry = bp.GetLocationAtIndex(0).GetAddress().GetLineEntry();
+    auto fileSpec = lineEntry.GetFileSpec();
+    auto bpFileName =
+        std::string(fileSpec.GetDirectory()) + '/' + fileSpec.GetFilename();
+    // The breakpoint exists. Delete it.
+    if (fileName == bpFileName && lineEntry.GetLine() == lineNumber) {
+      const break_id_t bpId = bp.GetID();
+      target.BreakpointDelete(bpId);
+      bps.erase(it);
+      return;
+    }
+  }
+  // The breakpoint doesn't exist, add it.
+  auto bp = target.BreakpointCreateByLocation(fileName.c_str(), lineNumber);
   assert(bp);
   bps.push_back(std::move(bp));
 }
@@ -76,6 +91,8 @@ SBValueList LldbDebugger::getFrameVariables() {
   return process.GetSelectedThread().GetSelectedFrame().GetVariables(
       true, true, true, true, DynamicValueType::eNoDynamicValues);
 }
+
+bool LldbDebugger::isStarted() { return static_cast<bool>(process); }
 
 bool LldbDebugger::isStopped() { return process.GetState() == eStateStopped; }
 

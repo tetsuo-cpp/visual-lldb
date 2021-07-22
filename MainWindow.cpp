@@ -26,6 +26,8 @@ MainWindow::MainWindow(const QString &executablePath, QWidget *parent)
                    &MainWindow::onStepUp);
   QObject::connect(ui->openFileButton, &QAbstractButton::clicked, this,
                    &MainWindow::onOpenFile);
+  QObject::connect(ui->codeBrowser, &CodeBrowser::breakpointToggled, this,
+                   &MainWindow::onBreakpointToggle);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -56,6 +58,20 @@ void MainWindow::onOpenFile() {
     return;
   // FIXME: Breakpoints markings will disappear if you open a file manually.
   populateCodeBrowser(openFile.toStdString(), 0, {});
+}
+
+void MainWindow::onBreakpointToggle(size_t lineNumber) {
+  if (lineNumber == 0)
+    return;
+  debugger.toggleBreakpoint(currentFile, lineNumber);
+  // Consolidate this with `updateView`.
+  const auto bps = updateBreakpointModel();
+  size_t currentLine = 0;
+  if (debugger.isStarted()) {
+    auto loc = debugger.getLocation();
+    currentLine = loc.getLine();
+  }
+  populateCodeBrowser(currentFile, currentLine, bps);
 }
 
 void MainWindow::updateView() {

@@ -32,10 +32,11 @@ public:
   void next();
   void stepUp();
   void stepDown();
-  void setBreakpoint(const std::string &functionName);
+  void toggleBreakpoint(const std::string &fileName, size_t lineNumber);
   CodeLocation getLocation() const;
   std::vector<lldb::SBBreakpoint> &getBreakpoints();
   lldb::SBValueList getFrameVariables();
+  bool isStarted();
 
 private:
   void waitForStop();

@@ -25,6 +25,7 @@ public slots:
   void onStepDown();
   void onStepUp();
   void onOpenFile();
+  void onBreakpointToggle(size_t lineNumber);
 
 private:
   void updateView();

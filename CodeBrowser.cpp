@@ -32,7 +32,8 @@ int CodeBrowser::lineNumberAreaWidth() {
 
 void CodeBrowser::contextMenuEvent(QContextMenuEvent *event) {
   QMenu *menu = createStandardContextMenu();
-  menu->addAction(tr("Toggle Breakpoint"));
+  QAction *action = menu->addAction(tr("Toggle Breakpoint"));
+  connect(action, &QAction::triggered, this, &CodeBrowser::onBreakpointAction);
   menu->exec(event->globalPos());
   delete menu;
 }
@@ -76,7 +77,7 @@ void CodeBrowser::updateHighlightedLines(const std::vector<Breakpoint> &bps,
   // Mark current position as yellow.
   if (currentLine > 0) {
     QTextEdit::ExtraSelection selection;
-    QTextCursor cursor(document()->findBlockByLineNumber(currentLine));
+    QTextCursor cursor(document()->findBlockByLineNumber(currentLine - 1));
     QColor lineColor = QColor(Qt::yellow).lighter(160);
     selection.format.setBackground(lineColor);
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -111,6 +112,12 @@ void CodeBrowser::lineNumberAreaPaintEvent(QPaintEvent *event) {
     bottom = top + qRound(blockBoundingRect(block).height());
     ++blockNumber;
   }
+}
+
+void CodeBrowser::onBreakpointAction() {
+  QTextCursor cursor = textCursor();
+  int lineNumber = cursor.blockNumber() + 1;
+  emit breakpointToggled(lineNumber);
 }
 
 } // namespace visual_lldb

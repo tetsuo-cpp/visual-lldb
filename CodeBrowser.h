@@ -27,12 +27,16 @@ public:
   void updateHighlightedLines(const std::vector<Breakpoint> &bps,
                               size_t currentLine);
 
+signals:
+  void breakpointToggled(size_t lineNumber);
+
 protected:
   void resizeEvent(QResizeEvent *event) override;
 
 private slots:
   void updateLineNumberAreaWidth(int newBlockCount);
   void updateLineNumberArea(const QRect &rect, int dy);
+  void onBreakpointAction();
 
 private:
   QWidget *lineNumberArea;
