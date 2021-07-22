@@ -1,13 +1,17 @@
 #include <stdio.h>
 
-void printMsg(const char *msg) {
-  for (int i = 0; i < 1000; ++i) {
-    printf("%d\n", i);
+void loopFunc(int lower, int upper, const char *customMsg) {
+  printf("Commencing loopFunc\n");
+  printf("Custom msg: %s\n", customMsg);
+  int index = lower;
+  while (index < upper) {
+    printf("%d\n", index);
+    ++index;
   }
-  printf("%s", msg);
+  printf("Finishing loopFunc\n");
 }
 
 int main(int argc, char *argv[]) {
-  printMsg("Hello, world!\n");
+  loopFunc(5, 100, "Hello, world!\n");
   return 0;
 }

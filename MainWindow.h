@@ -21,6 +21,7 @@ public:
 
 public slots:
   void onRun();
+  void onContinue();
   void onNext();
   void onStepDown();
   void onStepUp();

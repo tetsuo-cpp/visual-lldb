@@ -35,6 +35,12 @@ void LldbDebugger::run() {
   waitForStop();
 }
 
+void LldbDebugger::resume() {
+  assert(process);
+  process.Continue();
+  waitForStop();
+}
+
 void LldbDebugger::next() {
   assert(process);
   auto thread = process.GetSelectedThread();
@@ -95,9 +101,14 @@ SBValueList LldbDebugger::getFrameVariables() {
       true, true, true, true, DynamicValueType::eNoDynamicValues);
 }
 
-bool LldbDebugger::isStarted() { return static_cast<bool>(process); }
+bool LldbDebugger::isActive() {
+  return process && process.GetState() == eStateStopped;
+}
 
-bool LldbDebugger::isStopped() { return process.GetState() == eStateStopped; }
+bool LldbDebugger::isStopped() {
+  return process.GetState() == eStateStopped ||
+         process.GetState() == eStateExited;
+}
 
 void LldbDebugger::waitForStop() {
   SBListener listener = debugger.GetListener();
@@ -114,7 +125,7 @@ void LldbDebugger::waitForStop() {
       if (eventType != SBProcess::eBroadcastBitStateChanged)
         continue;
       const StateType state = SBProcess::GetStateFromEvent(event);
-      if (state == eStateStopped)
+      if (state == eStateStopped || state == eStateExited)
         break;
     }
   }

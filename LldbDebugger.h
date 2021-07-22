@@ -29,6 +29,7 @@ public:
   LldbDebugger &operator=(const LldbDebugger &) = delete;
   virtual ~LldbDebugger();
   void run();
+  void resume();
   void next();
   void stepUp();
   void stepDown();
@@ -36,7 +37,7 @@ public:
   CodeLocation getLocation() const;
   std::vector<lldb::SBBreakpoint> &getBreakpoints();
   lldb::SBValueList getFrameVariables();
-  bool isStarted();
+  bool isActive();
 
 private:
   void waitForStop();

@@ -44,6 +44,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="continueButton">
+         <property name="text">
+          <string>Continue</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="nextButton">
          <property name="text">
           <string>Next</string>

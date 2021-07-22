@@ -18,6 +18,8 @@ MainWindow::MainWindow(const QString &executablePath, QWidget *parent)
 
   QObject::connect(ui->runButton, &QAbstractButton::clicked, this,
                    &MainWindow::onRun);
+  QObject::connect(ui->continueButton, &QAbstractButton::clicked, this,
+                   &MainWindow::onContinue);
   QObject::connect(ui->nextButton, &QAbstractButton::clicked, this,
                    &MainWindow::onNext);
   QObject::connect(ui->stepDownButton, &QAbstractButton::clicked, this,
@@ -34,6 +36,11 @@ MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::onRun() {
   debugger.run();
+  updateView();
+}
+
+void MainWindow::onContinue() {
+  debugger.resume();
   updateView();
 }
 
@@ -67,7 +74,7 @@ void MainWindow::onBreakpointToggle(size_t lineNumber) {
   // Consolidate this with `updateView`.
   const auto bps = updateBreakpointModel();
   size_t currentLine = 0;
-  if (debugger.isStarted()) {
+  if (debugger.isActive()) {
     auto loc = debugger.getLocation();
     currentLine = loc.getLine();
   }
@@ -75,6 +82,8 @@ void MainWindow::onBreakpointToggle(size_t lineNumber) {
 }
 
 void MainWindow::updateView() {
+  if (!debugger.isActive())
+    return;
   // Not sure what this could should look but this ain't it.
   //
   // Since multiple components care about breakpoints, maybe we should be using
