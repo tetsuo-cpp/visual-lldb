@@ -8,8 +8,8 @@ BreakpointModel::BreakpointModel(QObject *parent)
 int BreakpointModel::rowCount(const QModelIndex &) const { return bps.size(); }
 
 int BreakpointModel::columnCount(const QModelIndex &) const {
-  // ID, File, Line
-  return 3;
+  // File, Line
+  return 2;
 }
 
 QVariant BreakpointModel::data(const QModelIndex &index, int role) const {
@@ -18,10 +18,8 @@ QVariant BreakpointModel::data(const QModelIndex &index, int role) const {
     const auto &bp = bps.at(index.row());
     switch (index.column()) {
     case 0:
-      return index.column();
-    case 1:
       return QString(bp.filePath.c_str());
-    case 2:
+    case 1:
       return bp.lineNumber;
     default:
       assert(false);
@@ -42,7 +40,7 @@ void BreakpointModel::setBreakpoints(const std::vector<Breakpoint> &newBps) {
   emit layoutChanged();
   // Emit changes.
   QModelIndex topLeft = createIndex(0, 0);
-  QModelIndex bottomRight = createIndex(bps.size() - 1, 2);
+  QModelIndex bottomRight = createIndex(bps.size() - 1, 1);
   emit dataChanged(topLeft, bottomRight, {Qt::DisplayRole});
 }
 
