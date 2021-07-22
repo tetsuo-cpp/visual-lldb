@@ -27,6 +27,9 @@ LldbDebugger::~LldbDebugger() {
 }
 
 void LldbDebugger::run() {
+  // Restart the run.
+  if (process)
+    process.Destroy();
   process = target.LaunchSimple(nullptr, nullptr, ".");
   assert(process);
   waitForStop();
